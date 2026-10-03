@@ -33,6 +33,17 @@ export interface RenderOptions {
    * the denormalised `contributor.memberName` on the item.
    */
   researcherNames?: Record<string, string>;
+  /**
+   * Which preview image the page names. "issue" (the default) is the card
+   * published beside the issue; "shared" is Issue #1's image, the fallback
+   * when that card could not be made.
+   */
+  ogImage?: "issue" | "shared";
+  /**
+   * Publication version. From the second on it is added to the image address
+   * so the republished card is not served from a crawler's cache.
+   */
+  version?: number;
 }
 
 const icon = (id: string, fill = false) =>
@@ -264,8 +275,11 @@ function head(opts: {
   ogTitle: string;
   description: string;
   url: string;
+  /** Absolute address of the preview image; defaults to the shared one. */
+  image?: string;
+  imageAlt?: string;
 }): string {
-  const ogImage = `${NEWSLETTER.publicBaseUrl}/${NEWSLETTER.ogImage}`;
+  const ogImage = opts.image ?? `${NEWSLETTER.publicBaseUrl}/${NEWSLETTER.ogImage}`;
   return `<!DOCTYPE html>
 <html dir="rtl" lang="ar">
 <head>
@@ -285,7 +299,7 @@ function head(opts: {
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="شعار إنجاز">
+<meta property="og:image:alt" content="${esc(opts.imageAlt ?? "شعار إنجاز")}">
 
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="${esc(opts.ogTitle)}">
@@ -320,6 +334,12 @@ function stripTatweel(s: string): string {
 /** The address an issue is shared at: its folder, no index.html. */
 export function issueUrl(issueNumber: number): string {
   return `${NEWSLETTER.publicBaseUrl}/${issueSlug(issueNumber)}/`;
+}
+
+/** Where an issue's own preview card is published. */
+export function issueImageUrl(issueNumber: number, version = 1): string {
+  const url = `${NEWSLETTER.publicBaseUrl}/${issueSlug(issueNumber)}/og.png`;
+  return version > 1 ? `${url}?v=${version}` : url;
 }
 
 /** Sections that actually have something in them, in newsletter order. */
@@ -357,6 +377,12 @@ export function renderIssueHtml(
     ogTitle: `${stripTatweel(issue.title)}، ${ordinal}`,
     description,
     url: issueUrl(issue.number),
+    ...(options.ogImage === "shared"
+      ? {}
+      : {
+          image: issueImageUrl(issue.number, options.version),
+          imageAlt: `${ordinal} من نشرة الذكاء الاصطناعي`,
+        }),
   })}
 </head>
 
