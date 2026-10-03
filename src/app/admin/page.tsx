@@ -12,6 +12,7 @@ import {
   categoryLabel,
 } from "@/components/contribution";
 import { CycleEndCard } from "@/components/admin/CycleEndCard";
+import { ManualAddCard } from "@/components/admin/ManualAddCard";
 import { DiamondRule } from "@/components/brand/DiamondRule";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -232,6 +233,8 @@ export default function AdminPage() {
       </div>
 
       <CycleEndCard passcode={passcode} onChange={onCalendarChange} />
+
+      <ManualAddCard passcode={passcode} members={members} onAdded={() => void load()} />
 
       {message && (
         <p className="text-sm" style={{ color: "var(--destructive)" }}>

@@ -7,6 +7,7 @@ import type {
 import { emptyBonus, effectiveCategory } from "@/lib/db/schema";
 import { saveWithAward, newId, replaceWithAward } from "@/lib/db/store";
 import { proposeBonus } from "./bonus";
+import { DEFAULT_ASSIGNER } from "./cycle-assign";
 import { applyLateDuplicate } from "./duplicates";
 import { evaluateContribution, type EvaluationOutcome } from "./evaluate";
 import { decidePoints } from "./points";
@@ -29,6 +30,12 @@ export interface SubmitInput {
   memberReason: string;
   note: string;
   focusArea: NewsletterCategory | null;
+  /**
+   * Host only: file it straight into an earlier cycle instead of the one
+   * today falls in. Evaluated and duplicate-checked like any submission; the
+   * cap and bonuses are counted in that cycle, and the row is locked there.
+   */
+  intoCycle?: { key: string; reason: string; by?: string };
 }
 
 export interface SubmitResult {
@@ -78,7 +85,9 @@ export async function submitContribution(
   }
 
   const now = new Date();
-  const cycle = cycleKey(now);
+  const dateCycle = cycleKey(now);
+  const cycle = input.intoCycle?.key ?? dateCycle;
+  const placed = cycle !== dateCycle;
   const status = statusOf(outcome);
 
   const draft: Contribution = {
@@ -108,6 +117,7 @@ export async function submitContribution(
     bonus: emptyBonus(),
     adminOverride: null,
     removed: false,
+    ...(placed ? { cycleLocked: true } : {}),
   };
 
   const saved = await saveWithAward(
@@ -129,6 +139,22 @@ export async function submitContribution(
           cycleKey: decision.cycleKey,
           cycleTotalBefore: decision.cycleTotalBefore,
         },
+        ...(placed && input.intoCycle
+          ? {
+              cycleHistory: [
+                {
+                  kind: "manual" as const,
+                  from: dateCycle,
+                  to: cycle,
+                  by: (input.intoCycle.by ?? "").trim() || DEFAULT_ASSIGNER,
+                  at: now.toISOString(),
+                  reason: input.intoCycle.reason.trim(),
+                  pointsBefore: 0,
+                  pointsAfter: decision.awarded,
+                },
+              ],
+            }
+          : {}),
         // Proposed against the status this landed on, not the one it was
         // evaluated under: a link that turned out to be a late duplicate has
         // no news of its own to attach a bonus to.

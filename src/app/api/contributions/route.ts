@@ -13,6 +13,7 @@ import {
 } from "@/lib/db/store";
 import { isAdmin } from "@/lib/services/admin";
 import { submitContribution } from "@/lib/services/submit";
+import { cycleKey } from "@/lib/util/date";
 import { meaningfulWordCount } from "@/lib/util/text";
 
 export const dynamic = "force-dynamic";
@@ -52,6 +53,10 @@ interface SubmitBody {
   memberReason?: string;
   note?: string;
   focusArea?: string;
+  /** Host only: file it into this earlier cycle, with the reason recorded. */
+  cycle?: string;
+  cycleReason?: string;
+  cycleBy?: string;
 }
 
 export async function POST(req: Request) {
@@ -92,6 +97,24 @@ export async function POST(req: Request) {
     );
   }
 
+  // A host filing a link into an earlier cycle goes through this same path,
+  // so it is evaluated and duplicate-checked like anything else.
+  let intoCycle: { key: string; reason: string; by?: string } | undefined;
+  if (body.cycle !== undefined) {
+    if (!isAdmin(req)) {
+      return NextResponse.json({ error: "رمز دخول المضيف مطلوب." }, { status: 401 });
+    }
+    const key = String(body.cycle).trim();
+    if (!/^C\d{4}$/.test(key) || key >= cycleKey(new Date())) {
+      return NextResponse.json({ error: "اختر دورة سابقة." }, { status: 400 });
+    }
+    const reason = (body.cycleReason ?? "").trim();
+    if (!reason) {
+      return NextResponse.json({ error: "اكتب سبب الإضافة إلى دورة سابقة." }, { status: 400 });
+    }
+    intoCycle = { key, reason, by: (body.cycleBy ?? "").trim() };
+  }
+
   const member = await getMember(memberId);
   if (!member) {
     return NextResponse.json(
@@ -117,6 +140,7 @@ export async function POST(req: Request) {
       memberReason,
       note,
       focusArea,
+      intoCycle,
     },
     existing,
   );
