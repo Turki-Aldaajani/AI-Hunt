@@ -39,7 +39,7 @@ export interface NewsletterItem {
   contributionId: string;
 
   title: string;
-  /** One line for the numbered list at the top of "أهم الأخبار". */
+  /** One line for the numbered list at the top of "أبرز الأخبار". */
   headline: string;
   /** Small label above the lead story, e.g. "الخبر الأهم". */
   kicker: string;

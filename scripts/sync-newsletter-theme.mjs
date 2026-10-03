@@ -34,7 +34,8 @@ const bodyScript = between("<script>", "</script>", bodyScriptStart);
 
 const entries = {
   NEWSLETTER_HEAD_SCRIPT: headScript.inner,
-  NEWSLETTER_CSS: style.inner,
+  // Issue #1 calls the section "أهم الأخبار"; later issues print "أبرز الأخبار".
+  NEWSLETTER_CSS: style.inner.replace("ملخّص أهم الأخبار", "ملخّص أبرز الأخبار"),
   NEWSLETTER_SPRITE: sprite.outer,
   NEWSLETTER_ARCH: arch.outer,
   NEWSLETTER_DIAMONDS: diamonds.outer,

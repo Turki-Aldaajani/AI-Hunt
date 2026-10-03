@@ -8,7 +8,7 @@ import {
 } from "@/lib/db/schema";
 import { sameResource, truncate } from "@/lib/util/text";
 import { contentSimilarity } from "@/lib/services/duplicates";
-import { SECTIONS, type SectionId } from "./sections";
+import { SECTIONS, SELECTION_ORDER, type SectionId } from "./sections";
 import type { UnusedContribution } from "./types";
 
 /**
@@ -139,8 +139,9 @@ export function planIssue(
     placed().find((p) => sameEvent(p, c)) ?? null;
 
   // STEP 3 + 5, group by primary category and fill each section, strongest
-  // first, one event once, different companies before repeats.
-  for (const def of SECTIONS) {
+  // first, one event once, different companies before repeats. Sections are
+  // filled in selection priority, so "top_news" still claims an event first.
+  for (const def of SELECTION_ORDER) {
     const group = considered
       .filter((c) => effectiveCategory(c) === def.category)
       .sort(rank);
@@ -184,7 +185,7 @@ export function planIssue(
   // secondary categories say it belongs there too. Never the same item twice.
   for (const c of overflow.sort(rank)) {
     const secondary = c.evaluation?.classification.secondary ?? [];
-    const home = SECTIONS.find(
+    const home = SELECTION_ORDER.find(
       (def) =>
         secondary.includes(def.category) &&
         inSection(def.id).length < Math.min(def.limit, 2),

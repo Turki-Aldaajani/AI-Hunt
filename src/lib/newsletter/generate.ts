@@ -47,7 +47,7 @@ Tone reference, from Issue #1:
 Return one entry per input item, with the same "ref".`;
 
 const SECTION_GUIDE: Record<SectionId, string> = {
-  top_news: `Section: أهم الأخبار (important AI news).
+  top_news: `Section: أبرز الأخبار (important AI news).
 - title: a short headline for the card.
 - headline: one line (at most ~15 words) for the numbered summary list at the top of the section.
 - paragraphs: 2–3 short paragraphs, what happened, what is notable about it, and the context a student needs.

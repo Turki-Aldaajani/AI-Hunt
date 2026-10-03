@@ -2,16 +2,20 @@ import { NEWSLETTER } from "@/lib/config/rules";
 import type { NewsletterCategory } from "@/lib/db/schema";
 
 /**
- * The six sections of the newsletter, exactly as Issue #1 names and anchors
- * them. This file is the single source for those names: the app's category
- * labels read from here too, so the two can never drift apart.
+ * The six sections of the newsletter, with the anchors Issue #1 gave them.
+ * This file is the single source for their names and their order: the app's
+ * category labels read from here too, so the two can never drift apart.
+ *
+ * From Issue #2 on, "top_news" is printed fourth and titled "أبرز الأخبار".
+ * Issue #1 keeps its original order and title; its file is never rewritten.
  */
 
+/** Newsletter order, top to bottom. */
 export const SECTION_IDS = [
-  "top_news",
   "models",
   "new_tools",
   "other_tools",
+  "top_news",
   "learn",
   "social",
 ] as const;
@@ -26,7 +30,7 @@ export interface SectionDef {
   category: NewsletterCategory;
   /** HTML anchor used by Issue #1 (#top-news, #models, …). */
   anchor: string;
-  /** Section title as printed in Issue #1. */
+  /** Section title as printed in the newsletter. */
   title: string;
   kind: SectionKind;
   limit: number;
@@ -40,15 +44,6 @@ export interface SectionDef {
 }
 
 export const SECTIONS: readonly SectionDef[] = [
-  {
-    id: "top_news",
-    category: "important_news",
-    anchor: "top-news",
-    title: "أهم الأخبار",
-    kind: "story",
-    limit: NEWSLETTER.sectionLimits.top_news,
-    defaults: { ctaLabel: "", fitLabel: "", ideaLabel: "", exampleLabel: "" },
-  },
   {
     id: "models",
     category: "new_models",
@@ -87,6 +82,15 @@ export const SECTIONS: readonly SectionDef[] = [
     },
   },
   {
+    id: "top_news",
+    category: "important_news",
+    anchor: "top-news",
+    title: "أبرز الأخبار",
+    kind: "story",
+    limit: NEWSLETTER.sectionLimits.top_news,
+    defaults: { ctaLabel: "", fitLabel: "", ideaLabel: "", exampleLabel: "" },
+  },
+  {
     id: "learn",
     category: "learn_this_week",
     anchor: "learn",
@@ -110,6 +114,28 @@ export const SECTIONS: readonly SectionDef[] = [
     defaults: { ctaLabel: "", fitLabel: "", ideaLabel: "", exampleLabel: "" },
   },
 ];
+
+/**
+ * Selection priority, which is not the printed order: when two contributions
+ * cover the same event, the one headed for "top_news" keeps it, exactly as
+ * before the sections were reordered.
+ */
+export const SELECTION_ORDER: readonly SectionDef[] = [
+  ...SECTIONS.filter((s) => s.id === "top_news"),
+  ...SECTIONS.filter((s) => s.id !== "top_news"),
+];
+
+/**
+ * Puts an issue's sections in newsletter order. Issues saved before a reorder
+ * keep their sections and items untouched; only the sequence changes.
+ */
+export function inSectionOrder<T extends { id: string }>(sections: T[]): T[] {
+  const rank = (id: string) => {
+    const i = SECTION_IDS.indexOf(id as SectionId);
+    return i === -1 ? SECTION_IDS.length : i;
+  };
+  return [...sections].sort((a, b) => rank(a.id) - rank(b.id));
+}
 
 export function sectionById(id: SectionId): SectionDef {
   const def = SECTIONS.find((s) => s.id === id);

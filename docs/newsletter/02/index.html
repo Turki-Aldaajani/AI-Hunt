@@ -379,7 +379,7 @@
     pointer-events: none; user-select: none;
   }
 
-  /* ─── ملخّص أهم الأخبار ─── */
+  /* ─── ملخّص أبرز الأخبار ─── */
   .headlines-panel { margin-block-end: 32px; }
   .headlines > li {
     display: grid; grid-template-columns: 2.25rem minmax(0, 1fr);
@@ -649,10 +649,10 @@
       <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-chevron"/></svg>
     </button>
     <ol class="toc-list" id="toc-list">
-      <li><a class="toc-link" href="#top-news">أهم الأخبار</a></li>
       <li><a class="toc-link" href="#models">جديد النماذج</a></li>
       <li><a class="toc-link" href="#new-tools">أدوات جديدة</a></li>
       <li><a class="toc-link" href="#more-tools">أدوات أخرى</a></li>
+      <li><a class="toc-link" href="#top-news">أبرز الأخبار</a></li>
       <li><a class="toc-link" href="#learn">تعلّم هذا الأسبوع</a></li>
       <li><a class="toc-link" href="#social">رائج على السوشال</a></li>
     </ol>
@@ -660,79 +660,6 @@
 
   <main class="main" id="content">
   <article>
-
-    <!-- ═══════════ أهم الأخبار ═══════════ -->
-    <section class="section" id="top-news" aria-labelledby="top-news-title">
-      <header class="section-head reveal">
-        <span class="section-mark" aria-hidden="true"></span>
-        <h2 class="section-title" id="top-news-title">أهم الأخبار</h2>
-      </header>
-
-      <div class="panel headlines-panel reveal">
-        <ol class="headlines">
-          <li><span class="headline-num">١</span><span>OpenAI تكشف تسريب 53 صورة عبر وكلاء الذكاء الاصطناعي</span></li>
-          <li><span class="headline-num">٢</span><span>Google تطلق خادم MCP لـ Google Home للتحكم بالأجهزة عبر وكلاء الذكاء الاصطناعي</span></li>
-          <li><span class="headline-num">٣</span><span>NVIDIA تطلق منصة Open Agent Safety Platform لتأمين الوكلاء</span></li>
-        </ol>
-      </div>
-
-      <div class="stack">
-        <article class="card story story--lead reveal">
-          <span class="card-num" aria-hidden="true">١</span>
-          <p class="kicker">الخبر الأهم</p>
-          <h3 class="story-title">OpenAI تكشف تسريب 53 صورة عبر وكلاء الذكاء الاصطناعي</h3>
-          <div class="prose">
-            <p>ذكرت OpenAI أن وكلاء الذكاء الاصطناعي لديها تسببوا في نشر 53 صورة قدمها مستخدمون عبر روابط غير معلنة على مواقع استضافة صور. وأوضحت الشركة أن الحادث وقع في بيئة بحثية أثناء نقل بيانات تدريب وتقييم عبر خدمات خارجية، وأنه سبق تطبيق ضمانات جديدة، وأنها تعاونت مع مزودي الاستضافة لحذف معظم المحتوى.</p>
-            <p>أعلنت OpenAI أن وكلاء الذكاء الاصطناعي التابعين لها تسببوا في نشر 53 صورة قدمها مستخدمون على الإنترنت.</p>
-            <p>الصور نُشرت على مواقع استضافة صور عبر روابط لم تكن مدرجة بشكل علني.</p>
-          </div>
-          <div class="why" role="note">
-            <p class="why-badge"><svg class="icon icon--fill" aria-hidden="true" focusable="false"><use href="#i-diamond"/></svg>لماذا يهمك؟</p>
-            <p class="why-text">تسريبات عبر وكلاء OpenAI:
-في سابقة عالمية هذا الشهر، قام وكيل ذكاء اصطناعي تابع للشركة باختراق موقع حكومي أسترالي، كما سُربت 53 صورة لمستخدمي ChatGPT سبب الاستخدام والتفاصيل: يُبرز هذا الحدث ضرورة وضع قيود برمجية صارمة، حيث تُظهر هذه الحوادث كيف يمكن للنماذج الذكية تنفيذ مهام غير مصرح بها بناءً على ثغرات في أمان البيانات.</p>
-          </div>
-          <p class="source"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-link"/></svg><span>المصدر: <a href="https://www.google.com/url?q=https://arabic.rt.com/technology/1837045-%25D8%25A3%25D9%2588%25D8%25A8%25D9%2586-%25D8%25A5%25D9%258A%25D9%2587-%25D8%25A2%25D9%258A-%25D8%25AA%25D9%2583%25D8%25B4%25D9%2581-%25D8%25AA%25D8%25B3%25D8%25B1%25D9%258A%25D8%25A8-53-%25D8%25B5%25D9%2588%25D8%25B1%25D8%25A9-%25D9%2582%25D8%25AF%25D9%2585%25D9%2587%25D8%25A7-%25D9%2585%25D8%25B3%25D8%25AA%25D8%25AE%25D8%25AF%25D9%2585%25D9%2588%25D9%2586-%25D8%25B9%25D8%25A8%25D8%25B1-%25D9%2588%25D9%2583%25D9%2584%25D8%25A7%25D8%25A1-%25D8%25A7%25D9%2584%25D8%25B0%25D9%2583%25D8%25A7%25D8%25A1-%25D8%25A7%25D9%2584%25D8%25A7%25D8%25B5%25D8%25B7%25D9%2586%25D8%25A7%25D8%25B9%25D9%258A/amp/&amp;sa=U&amp;ved=2ahUKEwjq_Ke7pJGXAxV41gIHHZ-tJAkQFnoECEYQAQ&amp;usg=AOvVaw0zTxELWGCFZMqaLk1663HY">OpenAI</a></span></p>
-          <p class="source"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-users"/></svg><span>الباحث/ه: Mukhtar</span></p>
-        </article>
-
-        <article class="card story reveal">
-          <span class="card-num" aria-hidden="true">٢</span>
-          
-          <h3 class="story-title">Google تطلق خادم MCP لـ Google Home للتحكم بالأجهزة عبر وكلاء الذكاء الاصطناعي</h3>
-          <div class="prose">
-            <p>أعلنت Google عن وصول مبكر لخادم MCP الخاص بـ Google Home، ما يتيح لأي وكيل ذكاء اصطناعي يدعم MCP مثل Claude وChatGPT التحكم بأجهزة المنزل الذكي ومراجعة ملخصات الكاميرات وسجل الأحداث بلغة طبيعية. الإعداد يتم عبر مشروع على Google Cloud وتهيئته لاستخدام Home MCP ثم منح الوكيل الصلاحيات، والوصول متاح تدريجيًا لمشتركي Premium Advanced في أمريكا.</p>
-            <p>Google أطلقت وصولًا مبكرًا لخادم MCP الخاص بمنظومة Google Home.</p>
-            <p>أي وكيل يدعم MCP مثل Claude وChatGPT يمكنه التحكم بالأجهزة والوصول لسجل الأحداث بلغة طبيعية.</p>
-          </div>
-          <div class="why" role="note">
-            <p class="why-badge"><svg class="icon icon--fill" aria-hidden="true" focusable="false"><use href="#i-diamond"/></svg>لماذا يهمك؟</p>
-            <p class="why-text">في 16 سبتمبر أطلقت قوقل خادم MCP لـ Google Home، يعني صار أي وكيل ذكاء اصطناعي يدعم MCP مثل Claude وChatGPT يقدر يتحكم بأجهزة البيت الذكية بكلام عادي: يشغّل الإضاءة، يعدّل المكيّف، ويراجع ملخصات الكاميرات. واللافت إن قوقل فتحتها لمنافسين Gemini، مع منع أوامر حساسة مثل فتح الأبواب.
-
-كيفية الاستخدام: أنشئ مشروع على Google Cloud وفعّل فيه Home MCP، ثم أعطِ إعدادات الاتصال للوكيل حقك، وهو يطلب منك تسجيل الدخول والموافقة على الصلاحيات. متاح حاليًا في أمريكا لمشتركي Premium Advanced.</p>
-          </div>
-          <p class="source"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-link"/></svg><span>المصدر: <a href="https://techcrunch.com/2026/09/16/your-ai-agents-can-now-control-your-google-home-devices/">Google</a></span></p>
-          <p class="source"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-users"/></svg><span>الباحث/ه: Nawal</span></p>
-        </article>
-
-        <article class="card story reveal">
-          <span class="card-num" aria-hidden="true">٣</span>
-          
-          <h3 class="story-title">NVIDIA تطلق منصة Open Agent Safety Platform لتأمين الوكلاء</h3>
-          <div class="prose">
-            <p>أعلنت NVIDIA منصة Open Agent Safety Platform، وهي منصة برمجية مفتوحة وتصميم نظام مرجعي يهدفان إلى تعزيز أمان وكلاء الذكاء الاصطناعي من الاختبار حتى النشر. تتضمّن برمجية OpenShell مفتوحة المصدر لحدود التشغيل الآمن وفرض السياسات، ونظام Sentry المرجعي للمراقبة والعزل السريع للوكلاء المتجاوزين.</p>
-            <p>NVIDIA أعلنت منصة Open Agent Safety Platform لتقوية أمان وكلاء الذكاء الاصطناعي من مرحلة الاختبار حتى النشر.</p>
-            <p>تتكوّن المنصة من برمجية OpenShell مفتوحة المصدر التي توفّر حدود تشغيل آمنة وتتبّع الإجراءات وتفرض السياسات على وحدات Vera CPU.</p>
-          </div>
-          <div class="why" role="note">
-            <p class="why-badge"><svg class="icon icon--fill" aria-hidden="true" focusable="false"><use href="#i-diamond"/></svg>لماذا يهمك؟</p>
-            <p class="why-text">اطلقت NVIDIA منصة لتامين الوكلاء من مرحلة الاختبار وحتى الاطلاق، وهي مصممة لتعزز امان وكلاء الذكاء الاصطناعي، تم اطلاقها بعد الوقائع السابقة اللتي ابرزت الحاجة الى تزويد المؤسسات بأدوات تعزز الرقابة والأمان.
-وفي هذة الحوادث تكرر النمط نفسة (تجاوز الوكلاء ضوابط الامان)</p>
-          </div>
-          <p class="source"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-link"/></svg><span>المصدر: <a href="https://nvidianews.nvidia.com/news/open-agent-safety-platform">NVIDIA</a></span></p>
-          <p class="source"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-users"/></svg><span>الباحث/ه: Yara</span></p>
-        </article>
-      </div>
-    </section>
 
     <!-- ═══════════ جديد النماذج ═══════════ -->
     <section class="section" id="models" aria-labelledby="models-title">
@@ -941,6 +868,79 @@
           <div class="actions">
             <a class="btn btn-ghost" href="https://github.blog/ai-and-ml/github-copilot/the-era-of-ai-as-text-is-over-execution-is-the-new-interface/](https://github.blog/ai-and-ml/github-copilot/the-era-of-ai-as-text-is-over-execution-is-the-new-interface/">جرّب الأداة<svg class="icon" aria-hidden="true" focusable="false"><use href="#i-arrow"/></svg></a>
           </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ═══════════ أبرز الأخبار ═══════════ -->
+    <section class="section" id="top-news" aria-labelledby="top-news-title">
+      <header class="section-head reveal">
+        <span class="section-mark" aria-hidden="true"></span>
+        <h2 class="section-title" id="top-news-title">أبرز الأخبار</h2>
+      </header>
+
+      <div class="panel headlines-panel reveal">
+        <ol class="headlines">
+          <li><span class="headline-num">١</span><span>OpenAI تكشف تسريب 53 صورة عبر وكلاء الذكاء الاصطناعي</span></li>
+          <li><span class="headline-num">٢</span><span>Google تطلق خادم MCP لـ Google Home للتحكم بالأجهزة عبر وكلاء الذكاء الاصطناعي</span></li>
+          <li><span class="headline-num">٣</span><span>NVIDIA تطلق منصة Open Agent Safety Platform لتأمين الوكلاء</span></li>
+        </ol>
+      </div>
+
+      <div class="stack">
+        <article class="card story story--lead reveal">
+          <span class="card-num" aria-hidden="true">١</span>
+          <p class="kicker">الخبر الأهم</p>
+          <h3 class="story-title">OpenAI تكشف تسريب 53 صورة عبر وكلاء الذكاء الاصطناعي</h3>
+          <div class="prose">
+            <p>ذكرت OpenAI أن وكلاء الذكاء الاصطناعي لديها تسببوا في نشر 53 صورة قدمها مستخدمون عبر روابط غير معلنة على مواقع استضافة صور. وأوضحت الشركة أن الحادث وقع في بيئة بحثية أثناء نقل بيانات تدريب وتقييم عبر خدمات خارجية، وأنه سبق تطبيق ضمانات جديدة، وأنها تعاونت مع مزودي الاستضافة لحذف معظم المحتوى.</p>
+            <p>أعلنت OpenAI أن وكلاء الذكاء الاصطناعي التابعين لها تسببوا في نشر 53 صورة قدمها مستخدمون على الإنترنت.</p>
+            <p>الصور نُشرت على مواقع استضافة صور عبر روابط لم تكن مدرجة بشكل علني.</p>
+          </div>
+          <div class="why" role="note">
+            <p class="why-badge"><svg class="icon icon--fill" aria-hidden="true" focusable="false"><use href="#i-diamond"/></svg>لماذا يهمك؟</p>
+            <p class="why-text">تسريبات عبر وكلاء OpenAI:
+في سابقة عالمية هذا الشهر، قام وكيل ذكاء اصطناعي تابع للشركة باختراق موقع حكومي أسترالي، كما سُربت 53 صورة لمستخدمي ChatGPT سبب الاستخدام والتفاصيل: يُبرز هذا الحدث ضرورة وضع قيود برمجية صارمة، حيث تُظهر هذه الحوادث كيف يمكن للنماذج الذكية تنفيذ مهام غير مصرح بها بناءً على ثغرات في أمان البيانات.</p>
+          </div>
+          <p class="source"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-link"/></svg><span>المصدر: <a href="https://www.google.com/url?q=https://arabic.rt.com/technology/1837045-%25D8%25A3%25D9%2588%25D8%25A8%25D9%2586-%25D8%25A5%25D9%258A%25D9%2587-%25D8%25A2%25D9%258A-%25D8%25AA%25D9%2583%25D8%25B4%25D9%2581-%25D8%25AA%25D8%25B3%25D8%25B1%25D9%258A%25D8%25A8-53-%25D8%25B5%25D9%2588%25D8%25B1%25D8%25A9-%25D9%2582%25D8%25AF%25D9%2585%25D9%2587%25D8%25A7-%25D9%2585%25D8%25B3%25D8%25AA%25D8%25AE%25D8%25AF%25D9%2585%25D9%2588%25D9%2586-%25D8%25B9%25D8%25A8%25D8%25B1-%25D9%2588%25D9%2583%25D9%2584%25D8%25A7%25D8%25A1-%25D8%25A7%25D9%2584%25D8%25B0%25D9%2583%25D8%25A7%25D8%25A1-%25D8%25A7%25D9%2584%25D8%25A7%25D8%25B5%25D8%25B7%25D9%2586%25D8%25A7%25D8%25B9%25D9%258A/amp/&amp;sa=U&amp;ved=2ahUKEwjq_Ke7pJGXAxV41gIHHZ-tJAkQFnoECEYQAQ&amp;usg=AOvVaw0zTxELWGCFZMqaLk1663HY">OpenAI</a></span></p>
+          <p class="source"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-users"/></svg><span>الباحث/ه: Mukhtar</span></p>
+        </article>
+
+        <article class="card story reveal">
+          <span class="card-num" aria-hidden="true">٢</span>
+          
+          <h3 class="story-title">Google تطلق خادم MCP لـ Google Home للتحكم بالأجهزة عبر وكلاء الذكاء الاصطناعي</h3>
+          <div class="prose">
+            <p>أعلنت Google عن وصول مبكر لخادم MCP الخاص بـ Google Home، ما يتيح لأي وكيل ذكاء اصطناعي يدعم MCP مثل Claude وChatGPT التحكم بأجهزة المنزل الذكي ومراجعة ملخصات الكاميرات وسجل الأحداث بلغة طبيعية. الإعداد يتم عبر مشروع على Google Cloud وتهيئته لاستخدام Home MCP ثم منح الوكيل الصلاحيات، والوصول متاح تدريجيًا لمشتركي Premium Advanced في أمريكا.</p>
+            <p>Google أطلقت وصولًا مبكرًا لخادم MCP الخاص بمنظومة Google Home.</p>
+            <p>أي وكيل يدعم MCP مثل Claude وChatGPT يمكنه التحكم بالأجهزة والوصول لسجل الأحداث بلغة طبيعية.</p>
+          </div>
+          <div class="why" role="note">
+            <p class="why-badge"><svg class="icon icon--fill" aria-hidden="true" focusable="false"><use href="#i-diamond"/></svg>لماذا يهمك؟</p>
+            <p class="why-text">في 16 سبتمبر أطلقت قوقل خادم MCP لـ Google Home، يعني صار أي وكيل ذكاء اصطناعي يدعم MCP مثل Claude وChatGPT يقدر يتحكم بأجهزة البيت الذكية بكلام عادي: يشغّل الإضاءة، يعدّل المكيّف، ويراجع ملخصات الكاميرات. واللافت إن قوقل فتحتها لمنافسين Gemini، مع منع أوامر حساسة مثل فتح الأبواب.
+
+كيفية الاستخدام: أنشئ مشروع على Google Cloud وفعّل فيه Home MCP، ثم أعطِ إعدادات الاتصال للوكيل حقك، وهو يطلب منك تسجيل الدخول والموافقة على الصلاحيات. متاح حاليًا في أمريكا لمشتركي Premium Advanced.</p>
+          </div>
+          <p class="source"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-link"/></svg><span>المصدر: <a href="https://techcrunch.com/2026/09/16/your-ai-agents-can-now-control-your-google-home-devices/">Google</a></span></p>
+          <p class="source"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-users"/></svg><span>الباحث/ه: Nawal</span></p>
+        </article>
+
+        <article class="card story reveal">
+          <span class="card-num" aria-hidden="true">٣</span>
+          
+          <h3 class="story-title">NVIDIA تطلق منصة Open Agent Safety Platform لتأمين الوكلاء</h3>
+          <div class="prose">
+            <p>أعلنت NVIDIA منصة Open Agent Safety Platform، وهي منصة برمجية مفتوحة وتصميم نظام مرجعي يهدفان إلى تعزيز أمان وكلاء الذكاء الاصطناعي من الاختبار حتى النشر. تتضمّن برمجية OpenShell مفتوحة المصدر لحدود التشغيل الآمن وفرض السياسات، ونظام Sentry المرجعي للمراقبة والعزل السريع للوكلاء المتجاوزين.</p>
+            <p>NVIDIA أعلنت منصة Open Agent Safety Platform لتقوية أمان وكلاء الذكاء الاصطناعي من مرحلة الاختبار حتى النشر.</p>
+            <p>تتكوّن المنصة من برمجية OpenShell مفتوحة المصدر التي توفّر حدود تشغيل آمنة وتتبّع الإجراءات وتفرض السياسات على وحدات Vera CPU.</p>
+          </div>
+          <div class="why" role="note">
+            <p class="why-badge"><svg class="icon icon--fill" aria-hidden="true" focusable="false"><use href="#i-diamond"/></svg>لماذا يهمك؟</p>
+            <p class="why-text">اطلقت NVIDIA منصة لتامين الوكلاء من مرحلة الاختبار وحتى الاطلاق، وهي مصممة لتعزز امان وكلاء الذكاء الاصطناعي، تم اطلاقها بعد الوقائع السابقة اللتي ابرزت الحاجة الى تزويد المؤسسات بأدوات تعزز الرقابة والأمان.
+وفي هذة الحوادث تكرر النمط نفسة (تجاوز الوكلاء ضوابط الامان)</p>
+          </div>
+          <p class="source"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-link"/></svg><span>المصدر: <a href="https://nvidianews.nvidia.com/news/open-agent-safety-platform">NVIDIA</a></span></p>
+          <p class="source"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-users"/></svg><span>الباحث/ه: Yara</span></p>
         </article>
       </div>
     </section>

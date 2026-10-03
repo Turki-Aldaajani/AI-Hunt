@@ -55,7 +55,7 @@ Each section asks for one thing beyond the link itself:
 
 | Section | What the member has to write | Bonus |
 |---|---|---|
-| أهم الأخبار (`important_news`) | why it matters (`why_it_matters`) | **+0.5** |
+| أبرز الأخبار (`important_news`) | why it matters (`why_it_matters`) | **+0.5** |
 | جديد النماذج (`new_models`) | who it is for (`who_is_it_for`) | **+0.5** |
 | أدوات جديدة / أخرى (`new_tools`, `other_tools`) | how to use it (`how_to_use`) | **+1** |
 | تعلّم هذا الأسبوع (`learn_this_week`) | a quick example (`quick_example`) | **+0.5** |
@@ -426,10 +426,12 @@ families Issue #1 uses — story, tool, learn, social — so a generated issue u
 only classes Issue #1 already defines. Issue #1's own file is read, never
 written.
 
-Sections keep their names and anchors from Issue #1 (`أهم الأخبار` / `#top-news`,
-`جديد النماذج` / `#models`, …), and `lib/newsletter/sections.ts` is the single
-place they are defined — the app's own category labels read from it, so the two
-can never drift.
+Sections keep their anchors from Issue #1 (`#top-news`, `#models`, …), and
+`lib/newsletter/sections.ts` is the single place their names and order are
+defined — the app's own category labels read from it, so the two can never
+drift. From Issue #2 on the order is جديد النماذج, أدوات جديدة, أدوات أخرى,
+أبرز الأخبار (formerly أهم الأخبار), تعلّم هذا الأسبوع, رائج على السوشال.
+Issue #1 keeps its original order and titles.
 
 A section with nothing in it is left out of the issue and its table of contents
 rather than filled. Nothing is invented to fill a section.
