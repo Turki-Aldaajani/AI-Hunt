@@ -158,7 +158,48 @@ export default function NewsletterEditorPage({
     }));
   }
 
-  async function post(url: string, body: unknown, key: string) {
+  /**
+   * Takes only the newly added item from the server's answer. That answer is
+   * the last saved issue, which knows nothing of the editor's unsaved moves
+   * and edits, so the rest of the draft stays exactly as it is on screen.
+   */
+  function withAddedItem(
+    local: IssueContext,
+    server: IssueContext,
+    contributionId: string,
+    sectionId: SectionId,
+  ): IssueContext {
+    const added = server.issue.sections
+      .flatMap((s) => s.items)
+      .find((i) => i.contributionId === contributionId);
+    return {
+      ...server,
+      issue: {
+        ...local.issue,
+        unused: server.issue.unused,
+        sections: local.issue.sections.map((s) =>
+          added && s.id === sectionId ? { ...s, items: [...s.items, added] } : s,
+        ),
+      },
+    };
+  }
+
+  async function addItem(contributionId: string) {
+    const sectionId = addTo;
+    await post(
+      `/api/newsletters/${id}/items`,
+      { contributionId, sectionId },
+      `add-${contributionId}`,
+      (local, server) => withAddedItem(local, server, contributionId, sectionId),
+    );
+  }
+
+  async function post(
+    url: string,
+    body: unknown,
+    key: string,
+    merge?: (local: IssueContext, server: IssueContext) => IssueContext,
+  ) {
     setBusy(key);
     setMessage(null);
     setNotice(null);
@@ -171,8 +212,13 @@ export default function NewsletterEditorPage({
         setMessage(payload.error ?? "لم تنجح العملية.");
         return null;
       }
-      setData(payload);
-      setDirty(false);
+      if (merge) {
+        // Unsaved edits survive the merge, so the draft stays as dirty as it was.
+        setData((local) => (local ? merge(local, payload) : payload));
+      } else {
+        setData(payload);
+        setDirty(false);
+      }
       if (payload.regenerateError) setMessage(payload.regenerateError);
       if (payload.publishWarnings?.length) setMessage(payload.publishWarnings.join(" · "));
       return payload;
@@ -873,13 +919,7 @@ export default function NewsletterEditorPage({
                       variant="outline"
                       size="sm"
                       disabled={busy !== null || published}
-                      onClick={() =>
-                        post(
-                          `/api/newsletters/${id}/items`,
-                          { contributionId: c.contributionId, sectionId: addTo },
-                          `add-${c.contributionId}`,
-                        )
-                      }
+                      onClick={() => addItem(c.contributionId)}
                     >
                       {busy === `add-${c.contributionId}` ? (
                         <Loader2 className="animate-spin" />
