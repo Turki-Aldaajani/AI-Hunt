@@ -32,7 +32,14 @@ import { issueSlug, monthOf } from "./format";
 import { newsletterAiEnabled, writeSection } from "./generate";
 import { LEGACY_ISSUES } from "./legacy";
 import { resolvePublisher } from "./publish";
-import { issueUrl, renderArchiveHtml, renderIssueHtml, type ArchiveEntry } from "./render";
+import { renderOgImage } from "./og-image";
+import {
+  issueImageUrl,
+  issueUrl,
+  renderArchiveHtml,
+  renderIssueHtml,
+  type ArchiveEntry,
+} from "./render";
 import { planIssue, type SelectionPlan } from "./select";
 import {
   SECTIONS,
@@ -787,6 +794,7 @@ export async function getIssueWithContext(id: string) {
     otherCycleCandidates,
     openWarnings: openWarnings(issue),
     url: issueUrl(issue.number),
+    imageUrl: issueImageUrl(issue.number, issue.publication?.version),
   };
 }
 
@@ -820,7 +828,7 @@ async function archiveEntries(extra?: NewsletterIssue): Promise<ArchiveEntry[]> 
     number: l.number,
     lead: l.lead,
     monthLabel: l.monthLabel,
-    href: l.path,
+    href: `${issueSlug(l.number)}/`,
   }));
   for (const n of published) {
     const issue = n.id === extra?.id ? extra : n;
@@ -829,7 +837,7 @@ async function archiveEntries(extra?: NewsletterIssue): Promise<ArchiveEntry[]> 
       number: issue.number,
       lead: issue.lead,
       monthLabel: monthOf(issue.cycleEnd).label,
-      href: `${issueSlug(issue.number)}/index.html`,
+      href: `${issueSlug(issue.number)}/`,
     });
   }
   return entries;
@@ -885,12 +893,29 @@ export async function publishIssue(
   }
 
   // Render before writing anything, so a rendering failure publishes nothing.
+  const version = (issue.publication?.version ?? 0) + 1;
+  const notes: string[] = [];
+
+  // The preview card is made first. If it cannot be, the issue still goes out
+  // naming the shared image, and the editor is told.
+  let card: Buffer | null = null;
+  try {
+    card = await renderOgImage(issue);
+  } catch (err) {
+    notes.push(
+      `تعذّر توليد صورة المعاينة، فنُشر العدد بصورة الشعار المشتركة: ${(err as Error)?.message ?? "خطأ غير معروف"}`,
+    );
+  }
+
   const html = renderIssueHtml(issue, {
     mode: "publish",
     researcherNames: await liveResearcherNames(),
+    ogImage: card ? "issue" : "shared",
+    version,
   });
-  const version = (issue.publication?.version ?? 0) + 1;
   const label = `newsletter: publish issue ${issueSlug(issue.number)}${version > 1 ? ` (v${version})` : ""}`;
+  // The image goes first, so a page never names a card that is not there yet.
+  if (card) await publisher.write(`${issueSlug(issue.number)}/og.png`, card, label);
   await publisher.write(path, html, label);
 
   const publication = {
@@ -908,7 +933,6 @@ export async function publishIssue(
   }));
 
   // The archive index is a list, not an issue: it is safe to rewrite.
-  const notes: string[] = [];
   try {
     const archive = renderArchiveHtml(await archiveEntries(saved!));
     await publisher.write("index.html", archive, "newsletter: update archive");

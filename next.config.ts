@@ -9,6 +9,14 @@ const nextConfig: NextConfig = {
   serverExternalPackages: ["@anthropic-ai/sdk", "pg"],
 
   /**
+   * The preview card is drawn at publish time from font files the route reads
+   * from disk by path, which the build's file tracing cannot see on its own.
+   */
+  outputFileTracingIncludes: {
+    "/api/newsletters/[id]/publish": ["./src/assets/fonts/**"],
+  },
+
+  /**
    * The Spline runtime references Draco decoder assets that it fetches from a
    * CDN at runtime and does not ship in the package. Webpack tries to resolve
    * those paths at build time and fails, so they are marked external — the

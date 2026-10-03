@@ -15,6 +15,7 @@ import Link from "next/link";
 import { use, useCallback, useEffect, useState } from "react";
 import AdminGate from "@/components/admin/AdminGate";
 import { OtherCycleAdd, type OtherCycleCandidate } from "@/components/admin/OtherCycleAdd";
+import { SharePack } from "@/components/admin/SharePack";
 import { useAdminSession } from "@/components/admin/useAdminSession";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -40,6 +41,7 @@ interface IssueContext {
   otherCycleCandidates?: OtherCycleCandidate[];
   openWarnings: number;
   url: string;
+  imageUrl?: string;
   regenerateError?: string | null;
   publishWarnings?: string[];
 }
@@ -471,6 +473,16 @@ export default function NewsletterEditorPage({
           )}
 
           {/* Sections */}
+          {published && data && issue.publication && (
+            <SharePack
+              issue={issue}
+              url={data.url}
+              imageUrl={data.imageUrl}
+              version={issue.publication.version}
+              editedAfterPublish={issue.editedAfterPublish}
+            />
+          )}
+
           {issue.sections.map((section) => (
             <Card key={section.id} className="overflow-hidden">
               <div className="flex flex-wrap items-center gap-3 border-b border-border px-5 py-4">

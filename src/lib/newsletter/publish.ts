@@ -21,7 +21,7 @@ export interface Publisher {
   target: "github" | "filesystem";
   describe(): string;
   exists(path: string): Promise<boolean>;
-  write(path: string, content: string, message: string): Promise<void>;
+  write(path: string, content: string | Buffer, message: string): Promise<void>;
   read(path: string): Promise<string | null>;
 }
 
@@ -67,7 +67,9 @@ function githubPublisher(token: string): Publisher {
         body: JSON.stringify({
           message,
           branch,
-          content: Buffer.from(content, "utf8").toString("base64"),
+          content: (typeof content === "string" ? Buffer.from(content, "utf8") : content).toString(
+            "base64",
+          ),
           ...(existing ? { sha: existing.sha } : {}),
         }),
       });
@@ -109,7 +111,7 @@ function filesystemPublisher(): Publisher {
     async write(path, content) {
       const target = full(path);
       await mkdir(dirname(target), { recursive: true });
-      await writeFile(target, content, "utf8");
+      await writeFile(target, content);
     },
   };
 }

@@ -269,8 +269,18 @@ export const NEWSLETTER = {
   /** A "new" model or tool older than this is flagged for review before publishing. */
   staleForNewDays: 90,
 
-  /** Public address of the published archive (GitHub Pages serves main:/docs). */
-  publicBaseUrl: "https://turki-aldaajani.github.io/Rased/newsletter",
+  /**
+   * Public address of the published archive (GitHub Pages serves main:/docs).
+   * Set NEWSLETTER_PUBLIC_BASE_URL to move to a custom domain without a code
+   * change; read on every access, so it follows the environment, not the build.
+   */
+  get publicBaseUrl(): string {
+    const configured = (process.env.NEWSLETTER_PUBLIC_BASE_URL ?? "").trim();
+    return (configured || "https://turki-aldaajani.github.io/Rased/newsletter").replace(
+      /\/+$/,
+      "",
+    );
+  },
 
   /** Shared social-preview image, published with Issue #1 and never changed. */
   ogImage: "01/og-injaz.png",
