@@ -20,6 +20,7 @@ import {
   setCycleEndOverrides,
   weekKey,
 } from "@/lib/util/date";
+import { inSectionOrder } from "@/lib/newsletter/sections";
 import type { NewsletterIssue } from "@/lib/newsletter/types";
 import { netlifyDriver } from "./netlify-blobs";
 import { postgresDriver } from "./postgres";
@@ -324,7 +325,11 @@ function hydrate(parsed: StoredDocument): Database {
   return {
     members,
     contributions,
-    newsletters: (parsed.newsletters ?? []) as NewsletterIssue[],
+    // Issues saved before the sections were reordered are read in the new order.
+    newsletters: ((parsed.newsletters ?? []) as NewsletterIssue[]).map((n) => ({
+      ...n,
+      sections: inSectionOrder(n.sections ?? []),
+    })),
     cycleEndOverrides,
   };
 }

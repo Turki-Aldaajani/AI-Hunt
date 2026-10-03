@@ -591,7 +591,7 @@ export default function NewsletterEditorPage({
                             {section.id === "top_news" && (
                               <Field
                                 label="سطر الملخص"
-                                hint="يظهر في قائمة أهم الأخبار المرقّمة"
+                                hint="يظهر في قائمة أبرز الأخبار المرقّمة"
                               >
                                 <Input
                                   value={item.headline}
