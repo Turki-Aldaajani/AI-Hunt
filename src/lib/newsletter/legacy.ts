@@ -17,7 +17,7 @@ export const LEGACY_ISSUES: readonly LegacyIssue[] = [
     lead: "لا نخبرك بكل ما حدث في الذكاء الاصطناعي، بل نختصر لك ما يستحق معرفته وما يمكنك استخدامه.",
     monthLabel: "سبتمبر 2026",
     monthIso: "2026-09",
-    url: `${NEWSLETTER.publicBaseUrl}/01/index.html`,
+    url: `${NEWSLETTER.publicBaseUrl}/01/`,
     path: "01/index.html",
   },
 ];

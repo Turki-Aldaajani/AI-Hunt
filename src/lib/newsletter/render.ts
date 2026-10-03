@@ -317,8 +317,9 @@ function stripTatweel(s: string): string {
   return s.replace(/ـ/g, "");
 }
 
+/** The address an issue is shared at: its folder, no index.html. */
 export function issueUrl(issueNumber: number): string {
-  return `${NEWSLETTER.publicBaseUrl}/${issueSlug(issueNumber)}/index.html`;
+  return `${NEWSLETTER.publicBaseUrl}/${issueSlug(issueNumber)}/`;
 }
 
 /** Sections that actually have something in them, in newsletter order. */
@@ -423,7 +424,7 @@ ${NEWSLETTER_SPRITE}
     <p class="footer-links">
       <a href="#">إلغاء الاشتراك</a>
       &nbsp;·&nbsp;
-      <a href="../index.html">الأعداد السابقة</a>
+      <a href="../">الأعداد السابقة</a>
     </p>
   </div>
 </footer>
@@ -470,7 +471,7 @@ export function renderArchiveHtml(entries: ArchiveEntry[]): string {
     title: "نـشـرة الـذكـاء الاصـطـنـاعـي، كل الأعداد",
     ogTitle: "نشرة الذكاء الاصطناعي، كل الأعداد",
     description: "كل أعداد نشرة الذكاء الاصطناعي من إنجاز.",
-    url: `${NEWSLETTER.publicBaseUrl}/index.html`,
+    url: `${NEWSLETTER.publicBaseUrl}/`,
   })}
 ${ARCHIVE_CSS}
 </head>

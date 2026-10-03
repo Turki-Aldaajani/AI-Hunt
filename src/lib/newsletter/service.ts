@@ -674,7 +674,7 @@ async function archiveEntries(extra?: NewsletterIssue): Promise<ArchiveEntry[]> 
     number: l.number,
     lead: l.lead,
     monthLabel: l.monthLabel,
-    href: l.path,
+    href: `${issueSlug(l.number)}/`,
   }));
   for (const n of published) {
     const issue = n.id === extra?.id ? extra : n;
@@ -683,7 +683,7 @@ async function archiveEntries(extra?: NewsletterIssue): Promise<ArchiveEntry[]> 
       number: issue.number,
       lead: issue.lead,
       monthLabel: monthOf(issue.cycleEnd).label,
-      href: `${issueSlug(issue.number)}/index.html`,
+      href: `${issueSlug(issue.number)}/`,
     });
   }
   return entries;
