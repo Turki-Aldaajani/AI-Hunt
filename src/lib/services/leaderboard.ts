@@ -6,6 +6,7 @@ import {
   effectiveDuplicate,
   effectivePoints,
   effectiveStatus,
+  publicContribution,
   type Contribution,
   type Member,
   type NewsletterCategory,
@@ -123,15 +124,22 @@ export function allTimePoints(
 /** How many different sections a cycle has to cover to earn the diversity bonus. */
 export const DIVERSITY_SECTIONS = BONUS.diversity.sections;
 
-/** All cycles that have data, newest first, the historical record. */
+/**
+ * All cycles that have data, newest first, the historical record. A host can
+ * place a contribution in a cycle older than any submission date, so the
+ * cycles the rows are actually keyed to count too, not just the date range.
+ */
 export function knownCycles(contributions: Contribution[]): string[] {
   const earliest = contributions.reduce<string | null>(
     (min, c) => (min === null || c.createdAt < min ? c.createdAt : min),
     null,
   );
-  const keys = cycleKeysSince(earliest);
-  const current = cycleKey(new Date());
-  return keys.includes(current) ? keys : [current, ...keys];
+  const keys = new Set([
+    ...cycleKeysSince(earliest),
+    ...contributions.map((c) => c.cycleKey),
+    cycleKey(new Date()),
+  ]);
+  return [...keys].sort((a, b) => b.localeCompare(a));
 }
 
 export interface MemberStats {
@@ -271,16 +279,19 @@ export function teamSummary(
           effectiveStatus(c) !== "blocked_source",
       )
       .sort((a, b) => editorialScore(b) - editorialScore(a));
-    return { category, count: items.length, topEditorial: items[0] ?? null };
+    const top = items[0];
+    return { category, count: items.length, topEditorial: top ? publicContribution(top) : null };
   });
 
   return {
     cycle,
     board,
     leader: board.find((r) => r.points > 0) ?? null,
+    // Served as-is by /api/summary, so the host audit is left out.
     recent: [...live]
       .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
-      .slice(0, 8),
+      .slice(0, 8)
+      .map(publicContribution),
     categories,
     totals: {
       submissions: live.length,

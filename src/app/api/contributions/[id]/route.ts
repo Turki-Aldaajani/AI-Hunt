@@ -6,6 +6,7 @@ import {
   DUPLICATE_OUTCOMES,
   NEWSLETTER_CATEGORIES,
   effectiveCategory,
+  publicContribution,
   type BonusAward,
   type BonusRequirement,
   type Contribution,
@@ -14,7 +15,7 @@ import {
   type NewsletterCategory,
 } from "@/lib/db/schema";
 import { getContribution, updateContribution } from "@/lib/db/store";
-import { requireAdmin } from "@/lib/services/admin";
+import { isAdmin, requireAdmin } from "@/lib/services/admin";
 import { ruleForSection, valueForRequirement } from "@/lib/services/bonus";
 import { clamp } from "@/lib/util/text";
 
@@ -22,13 +23,15 @@ export const dynamic = "force-dynamic";
 
 type Ctx = { params: Promise<{ id: string }> };
 
-export async function GET(_req: Request, { params }: Ctx) {
+export async function GET(req: Request, { params }: Ctx) {
   const { id } = await params;
   const contribution = await getContribution(id);
   if (!contribution) {
     return NextResponse.json({ error: "غير موجود." }, { status: 404 });
   }
-  return NextResponse.json({ contribution });
+  return NextResponse.json({
+    contribution: isAdmin(req) ? contribution : publicContribution(contribution),
+  });
 }
 
 /**

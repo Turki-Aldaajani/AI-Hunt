@@ -15,9 +15,16 @@ import {
   listAllMembers,
   listIssues,
   listMembers,
+  mutate,
   readDb,
   updateIssue,
 } from "@/lib/db/store";
+import {
+  CycleAssignError,
+  applyCycleAssignment,
+  planCycleAssignment,
+  type CycleAssignmentPlan,
+} from "@/lib/services/cycle-assign";
 import { cycleLeaderboard, knownCycles } from "@/lib/services/leaderboard";
 import { cycleEnd, cycleKey, cycleLabel, cycleStart } from "@/lib/util/date";
 import { truncate } from "@/lib/util/text";
@@ -406,12 +413,11 @@ export async function addItem(
   id: string,
   contributionId: string,
   sectionId: SectionId,
+  options: { confirmPublishedEdit?: boolean } = {},
 ): Promise<{ issue: NewsletterIssue; error: string | null }> {
   const current = await getIssue(id);
   if (!current) throw new NewsletterError("العدد غير موجود.", 404);
-  if (current.status === "published") {
-    throw new NewsletterError("العدد منشور، لا تُضاف إليه عناصر.", 409);
-  }
+  assertAddable(current, options);
   const db = await readDb();
   const contribution = db.contributions.find((c) => c.id === contributionId);
   if (!contribution || contribution.removed || !contribution.evaluation) {
@@ -426,19 +432,131 @@ export async function addItem(
 
   const out = await writeSection(sectionId, [contribution]);
   const item = out.items[0];
-  const issue = await updateIssue(id, (stored) =>
-    validateIssue(
+  const issue = await updateIssue(id, (stored) => {
+    assertAddable(stored, options);
+    return validateIssue(
       {
         ...stored,
         sections: stored.sections.map((s) =>
           s.id === sectionId ? { ...s, items: [...s.items, item] } : s,
         ),
         unused: stored.unused.filter((u) => u.contributionId !== contributionId),
+        editedAfterPublish: stored.status === "published" ? true : stored.editedAfterPublish,
       },
       byIdMap(db),
-    ),
-  );
+    );
+  });
   return { issue: issue!, error: out.error };
+}
+
+/**
+ * A published issue takes a new item only on the same deliberate confirmation
+ * an edit needs, and is then marked as edited until it is re-published.
+ */
+function assertAddable(issue: NewsletterIssue, options: { confirmPublishedEdit?: boolean }) {
+  if (issue.status === "published" && !options.confirmPublishedEdit) {
+    throw new NewsletterError(
+      "العدد منشور، لا تُضاف إليه عناصر إلا بتأكيد التعديل ثم إعادة النشر.",
+      409,
+      { needsConfirmation: true },
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Moving a contribution to another cycle (host only)
+// ---------------------------------------------------------------------------
+
+function asNewsletterError<T>(run: () => T): T {
+  try {
+    return run();
+  } catch (err) {
+    if (err instanceof CycleAssignError) throw new NewsletterError(err.message, err.status);
+    throw err;
+  }
+}
+
+/** What a move would do, for the confirmation step. Writes nothing. */
+export async function previewCycleAssignment(
+  contributionId: string,
+  toCycle: string,
+): Promise<Omit<CycleAssignmentPlan, "points">> {
+  const db = await readDb();
+  const { points, ...plan } = asNewsletterError(() =>
+    planCycleAssignment(db, contributionId, toCycle),
+  );
+  return plan;
+}
+
+export interface CycleAssignmentInput {
+  contributionId: string;
+  toCycle: string;
+  reason: string;
+  by?: string;
+}
+
+/**
+ * Re-keys a contribution to another cycle, locks it there, re-decides its
+ * base point against that cycle, records who did it and why, and takes it out
+ * of every draft issue so no draft is left pointing at it. Refused while it
+ * sits in a published issue. One write, under the store's lock.
+ */
+export async function assignContributionToCycle(
+  input: CycleAssignmentInput,
+): Promise<{ contribution: Contribution; plan: CycleAssignmentPlan }> {
+  if (!input.reason.trim()) throw new NewsletterError("اكتب سبب النقل.", 400);
+  return mutate((db) =>
+    asNewsletterError(() => {
+      const plan = planCycleAssignment(db, input.contributionId, input.toCycle);
+      const contribution = applyCycleAssignment(db, plan, {
+        reason: input.reason,
+        by: input.by,
+      });
+      const byId = byIdMap(db);
+      const now = new Date().toISOString();
+      db.newsletters = db.newsletters.map((n) => {
+        if (n.status === "published" || !plan.draftIssues.includes(n.number)) return n;
+        return {
+          ...validateIssue(
+            {
+              ...n,
+              sections: n.sections.map((s) => ({
+                ...s,
+                items: s.items.filter((i) => i.contributionId !== contribution.id),
+              })),
+              unused: n.unused.filter((u) => u.contributionId !== contribution.id),
+            },
+            byId,
+          ),
+          updatedAt: now,
+        };
+      });
+      return { contribution, plan };
+    }),
+  );
+}
+
+/**
+ * "Add a contribution from another cycle": moves it into this issue's cycle,
+ * then adds it like any other item. A published issue needs the same
+ * confirmation as an edit, checked before anything moves.
+ */
+export async function addItemFromOtherCycle(
+  id: string,
+  contributionId: string,
+  sectionId: SectionId,
+  options: { reason: string; by?: string; confirmPublishedEdit?: boolean },
+): Promise<{ issue: NewsletterIssue; error: string | null }> {
+  const current = await getIssue(id);
+  if (!current) throw new NewsletterError("العدد غير موجود.", 404);
+  assertAddable(current, options);
+  await assignContributionToCycle({
+    contributionId,
+    toCycle: current.cycleKey,
+    reason: options.reason,
+    by: options.by,
+  });
+  return addItem(id, contributionId, sectionId, options);
 }
 
 // ---------------------------------------------------------------------------
@@ -643,9 +761,37 @@ export async function getIssueWithContext(id: string) {
       memberPoints: effectivePoints(c),
     }))
     .sort((a, b) => b.editorialScore - a.editorialScore);
+  // Other cycles, for "add a contribution from another cycle". Anything in a
+  // published issue stays where it is.
+  const published = new Set(
+    db.newsletters
+      .filter((n) => n.status === "published")
+      .flatMap((n) => n.sections.flatMap((s) => s.items.map((i) => i.contributionId))),
+  );
+  const otherCycleCandidates = db.contributions
+    .filter(
+      (c) =>
+        !c.removed &&
+        c.evaluation &&
+        c.cycleKey !== issue.cycleKey &&
+        c.cycleKey <= cycleKey(new Date()) &&
+        !published.has(c.id),
+    )
+    .map((c) => ({
+      contributionId: c.id,
+      title: c.title,
+      memberName: c.memberName,
+      category: effectiveCategory(c),
+      editorialScore: editorialScore(c),
+      status: c.adminOverride?.status ?? c.status,
+      cycleKey: c.cycleKey,
+      cycleLabel: cycleLabel(c.cycleKey),
+    }))
+    .sort((a, b) => b.cycleKey.localeCompare(a.cycleKey) || b.editorialScore - a.editorialScore);
   return {
     issue,
     candidates,
+    otherCycleCandidates,
     openWarnings: openWarnings(issue),
     url: issueUrl(issue.number),
     imageUrl: issueImageUrl(issue.number, issue.publication?.version),

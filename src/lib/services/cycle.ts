@@ -126,6 +126,8 @@ function movesBetween(
 ): CycleEndMove[] {
   const moves: CycleEndMove[] = [];
   for (const c of contributions) {
+    // A host put this one in its cycle by hand; dates no longer decide it.
+    if (c.cycleLocked) continue;
     const from = cycleKeyWith(c.createdAt, before);
     const to = cycleKeyWith(c.createdAt, after);
     if (from === to) continue;
@@ -188,6 +190,7 @@ export function applyCycleEndPlan(db: Database, plan: CycleEndPlan): void {
   const before = db.cycleEndOverrides;
   // Removed rows move too, silently, so restoring one puts it in the right cycle.
   for (const c of db.contributions) {
+    if (c.cycleLocked) continue;
     const from = cycleKeyWith(c.createdAt, before);
     const to = cycleKeyWith(c.createdAt, plan.overrides);
     if (from !== to) c.cycleKey = to;

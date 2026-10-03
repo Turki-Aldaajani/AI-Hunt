@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { CountUp } from "@/components/ui/count-up";
 import { Reveal } from "@/components/ui/reveal";
-import { editorialScore, type Contribution } from "@/lib/db/schema";
+import { editorialScore, publicContribution, type Contribution } from "@/lib/db/schema";
 import { listContributions, listMembers } from "@/lib/db/store";
 import {
   allTimePoints,
@@ -73,7 +73,8 @@ export default async function DashboardPage() {
       points: allTimePoints(m.id, contributions),
       count: mine.length,
     };
-    latest[m.id] = mine.slice(0, 3);
+    // Handed to a client component, so it ships in the page: no host audit.
+    latest[m.id] = mine.slice(0, 3).map(publicContribution);
   }
 
   return (

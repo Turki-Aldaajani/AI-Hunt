@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { effectiveStatus } from "@/lib/db/schema";
+import { effectiveStatus, publicContribution } from "@/lib/db/schema";
 import { getContribution, listContributions } from "@/lib/db/store";
 import { reevaluateContribution } from "@/lib/services/submit";
 
@@ -42,5 +42,5 @@ export async function POST(_req: Request, { params }: Ctx) {
     existing,
   );
 
-  return NextResponse.json({ contribution, notices });
+  return NextResponse.json({ contribution: publicContribution(contribution), notices });
 }
