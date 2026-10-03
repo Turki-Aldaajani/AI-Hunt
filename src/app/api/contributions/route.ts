@@ -3,6 +3,7 @@ import { ACCEPTANCE } from "@/lib/config/rules";
 import {
   NEWSLETTER_CATEGORIES,
   effectiveStatus,
+  publicContribution,
   type NewsletterCategory,
 } from "@/lib/db/schema";
 import {
@@ -10,6 +11,7 @@ import {
   listAllContributions,
   listContributions,
 } from "@/lib/db/store";
+import { isAdmin } from "@/lib/services/admin";
 import { submitContribution } from "@/lib/services/submit";
 import { meaningfulWordCount } from "@/lib/util/text";
 
@@ -36,7 +38,10 @@ export async function GET(req: Request) {
   if (status) {
     contributions = contributions.filter((c) => effectiveStatus(c) === status);
   }
-  return NextResponse.json({ contributions });
+  // The host's cycle audit is for the host only.
+  return NextResponse.json({
+    contributions: isAdmin(req) ? contributions : contributions.map(publicContribution),
+  });
 }
 
 interface SubmitBody {
@@ -116,5 +121,8 @@ export async function POST(req: Request) {
     existing,
   );
 
-  return NextResponse.json({ contribution, notices }, { status: 201 });
+  return NextResponse.json(
+    { contribution: publicContribution(contribution), notices },
+    { status: 201 },
+  );
 }

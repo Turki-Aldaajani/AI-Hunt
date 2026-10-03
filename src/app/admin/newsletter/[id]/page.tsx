@@ -14,6 +14,7 @@ import {
 import Link from "next/link";
 import { use, useCallback, useEffect, useState } from "react";
 import AdminGate from "@/components/admin/AdminGate";
+import { OtherCycleAdd, type OtherCycleCandidate } from "@/components/admin/OtherCycleAdd";
 import { useAdminSession } from "@/components/admin/useAdminSession";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -36,6 +37,7 @@ interface Candidate {
 interface IssueContext {
   issue: NewsletterIssue;
   candidates: Candidate[];
+  otherCycleCandidates?: OtherCycleCandidate[];
   openWarnings: number;
   url: string;
   regenerateError?: string | null;
@@ -891,6 +893,22 @@ export default function NewsletterEditorPage({
               </ul>
             )}
           </Card>
+
+          <OtherCycleAdd<IssueContext>
+            issueId={id}
+            published={published}
+            dirty={dirty}
+            disabled={busy !== null}
+            candidates={data?.otherCycleCandidates ?? []}
+            defaultSection={addTo}
+            send={send}
+            onDone={(payload, done) => {
+              setData(payload);
+              setDirty(false);
+              setMessage(payload.regenerateError ?? null);
+              setNotice(done);
+            }}
+          />
 
           {!published && (
             <div className="flex justify-end">

@@ -132,7 +132,8 @@ interface LegacyEvaluation {
  * an editorial judgement, not a point, so it is carried over as the editorial
  * score and the member's points are recomputed under the new flat rule.
  */
-function migrateContribution(raw: Record<string, unknown>): Contribution {
+/** Exported for tests. */
+export function migrateContribution(raw: Record<string, unknown>): Contribution {
   if (raw.points && raw.status) {
     const stored = raw as unknown as Contribution;
     // Rows written before the bonus engine have no bonus at all, which is the
@@ -142,6 +143,9 @@ function migrateContribution(raw: Record<string, unknown>): Contribution {
 
   const legacy = (raw.evaluation ?? {}) as LegacyEvaluation;
   const createdAt = String(raw.createdAt ?? new Date().toISOString());
+  // A host-placed row keeps its cycle; only unlocked rows are keyed by date.
+  const locked = raw.cycleLocked === true && typeof raw.cycleKey === "string";
+  const cycle = locked ? String(raw.cycleKey) : cycleKey(createdAt);
   const dup =
     legacy.duplicate === "duplicate"
       ? "duplicate"
@@ -232,7 +236,7 @@ function migrateContribution(raw: Record<string, unknown>): Contribution {
     // rule is applied here and the cap is enforced by the migration pass below.
     awarded: status === "duplicate" ? 0 : POINTS.perValidContribution,
     reason: status === "duplicate" ? "duplicate" : "valid_contribution",
-    cycleKey: cycleKey(createdAt),
+    cycleKey: cycle,
     cycleTotalBefore: 0,
   };
 
@@ -247,7 +251,7 @@ function migrateContribution(raw: Record<string, unknown>): Contribution {
     note: "",
     focusArea: null,
     createdAt,
-    cycleKey: cycleKey(createdAt),
+    cycleKey: cycle,
     weekKey: String(raw.weekKey ?? weekKey(createdAt)),
     monthKey: String(raw.monthKey ?? monthKey(createdAt)),
     status,
@@ -258,6 +262,12 @@ function migrateContribution(raw: Record<string, unknown>): Contribution {
     bonus: emptyBonus(),
     adminOverride: null,
     removed: Boolean(raw.removed),
+    ...(locked
+      ? {
+          cycleLocked: true,
+          cycleHistory: (raw.cycleHistory ?? []) as Contribution["cycleHistory"],
+        }
+      : {}),
   };
 }
 

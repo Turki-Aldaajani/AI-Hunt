@@ -368,6 +368,38 @@ export interface Contribution {
   } | null;
 
   removed: boolean;
+
+  /**
+   * Set when a host placed this contribution in a cycle other than the one
+   * its submission date falls in. A locked row keeps its cycle: moving a
+   * cycle's end date or any re-keying from `createdAt` leaves it alone.
+   */
+  cycleLocked?: boolean;
+  /** Host-only audit trail of cycle changes. Never sent to a non-admin. */
+  cycleHistory?: CycleChange[];
+}
+
+/** One host decision about which cycle a contribution belongs to. */
+export interface CycleChange {
+  /** "assigned": moved after the fact. "manual": added by a host straight into `to`. */
+  kind: "assigned" | "manual";
+  from: string;
+  to: string;
+  /** Name the host typed, "المضيف" when left empty. */
+  by: string;
+  at: string; // ISO
+  reason: string;
+  /** Effective points before and after the move. */
+  pointsBefore: number;
+  pointsAfter: number;
+}
+
+/** What a public reader may see of a contribution: everything but the host audit. */
+export function publicContribution<T extends Contribution>(
+  c: T,
+): Omit<T, "cycleHistory" | "cycleLocked"> {
+  const { cycleHistory, cycleLocked, ...rest } = c;
+  return rest;
 }
 
 export interface Database {
