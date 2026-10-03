@@ -26,7 +26,13 @@ import { newsletterAiEnabled, writeSection } from "./generate";
 import { LEGACY_ISSUES } from "./legacy";
 import { resolvePublisher } from "./publish";
 import { renderOgImage } from "./og-image";
-import { issueUrl, renderArchiveHtml, renderIssueHtml, type ArchiveEntry } from "./render";
+import {
+  issueImageUrl,
+  issueUrl,
+  renderArchiveHtml,
+  renderIssueHtml,
+  type ArchiveEntry,
+} from "./render";
 import { planIssue, type SelectionPlan } from "./select";
 import {
   SECTIONS,
@@ -642,6 +648,7 @@ export async function getIssueWithContext(id: string) {
     candidates,
     openWarnings: openWarnings(issue),
     url: issueUrl(issue.number),
+    imageUrl: issueImageUrl(issue.number, issue.publication?.version),
   };
 }
 
