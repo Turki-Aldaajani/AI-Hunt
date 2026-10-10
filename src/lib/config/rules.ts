@@ -282,6 +282,11 @@ export const NEWSLETTER = {
     );
   },
 
+  /** The archive's index page, listing every published issue; Rased links here. */
+  get archiveUrl(): string {
+    return `${this.publicBaseUrl}/`;
+  },
+
   /** Shared social-preview image, published with Issue #1 and never changed. */
   ogImage: "01/og-injaz.png",
 } as const;

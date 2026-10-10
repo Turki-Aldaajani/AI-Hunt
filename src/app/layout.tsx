@@ -3,6 +3,7 @@ import Header from "@/components/Header";
 import { CurrentUserProvider } from "@/components/CurrentUser";
 import { DiamondRule } from "@/components/brand/DiamondRule";
 import { INJAZ_TAGLINE, InjazMark } from "@/components/brand/InjazLogo";
+import { NEWSLETTER } from "@/lib/config/rules";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -32,7 +33,7 @@ export default function RootLayout({
       <body className="min-h-screen">
         <div className="ambient" aria-hidden />
         <CurrentUserProvider>
-          <Header />
+          <Header archiveUrl={NEWSLETTER.archiveUrl} />
           <main className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
             {children}
           </main>

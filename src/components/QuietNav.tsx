@@ -2,6 +2,7 @@
 
 import { LayoutDashboard, List, Settings, Trophy, User } from "lucide-react";
 import Link from "next/link";
+import ArchiveLink from "./ArchiveLink";
 import { useCurrentUser } from "./CurrentUser";
 
 /**
@@ -9,7 +10,7 @@ import { useCurrentUser } from "./CurrentUser";
  * sits below the grid, in the quietest type on the page. The cycle's numbers
  * are not repeated here; the tiles beside the composer already carry them.
  */
-export default function QuietNav() {
+export default function QuietNav({ archiveUrl }: { archiveUrl: string }) {
   const { member } = useCurrentUser();
 
   const items = [
@@ -22,7 +23,8 @@ export default function QuietNav() {
   ];
 
   return (
-    <div className="mx-auto w-full max-w-xl">
+    <div className="mx-auto flex w-full max-w-xl flex-col items-center gap-6">
+      <ArchiveLink href={archiveUrl} />
       <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
         {items.map(({ href, label, Icon }) => (
           <Link
