@@ -1,6 +1,6 @@
 import Composer from "@/components/Composer";
 import HeroScene from "@/components/HeroScene";
-import HomeTiles from "@/components/HomeTiles";
+import HomeStats from "@/components/HomeStats";
 import QuietNav from "@/components/QuietNav";
 import { DiamondRule } from "@/components/brand/DiamondRule";
 import { Reveal } from "@/components/ui/reveal";
@@ -12,8 +12,8 @@ import { cycleKey, daysLeftInCycle } from "@/lib/util/date";
 export const dynamic = "force-dynamic";
 
 /**
- * The home page is still one action: paste a link. The grid around it holds
- * only what a member wants to know before pasting, what they have sent, how
+ * The home page is still one action: paste a link. Above it, one quiet line
+ * holds what a member wants to know before pasting, what has been sent, how
  * long is left, who is ahead, and everything else is a click away.
  */
 export default async function HomePage() {
@@ -35,19 +35,32 @@ export default async function HomePage() {
 
   return (
     <div className="space-y-12 py-6 sm:py-10">
-      <div className="grid gap-4 lg:grid-cols-4">
-        <div className="lg:col-span-2 lg:row-span-2">
-          <Composer />
+      {/* One column: title, the cycle in a line, then the composer, the only
+          card on the page. */}
+      <section className="mx-auto w-full max-w-[640px]">
+        <div className="mb-6 text-center">
+          <h1 className="font-serif-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+            ماذا اكتشفت؟
+          </h1>
+          <p className="mt-2.5 text-sm text-muted-foreground">
+            الصق رابطًا واكتب الخبر بكلماتك، ورصد يتولّى التحقق والتصنيف.
+          </p>
+          <div className="mt-4">
+            <HomeStats
+              perMember={perMember}
+              thisCycle={inCycle.length}
+              daysLeft={daysLeftInCycle()}
+              leader={
+                top
+                  ? { id: top.memberId, name: top.memberName, points: top.points }
+                  : null
+              }
+            />
+          </div>
         </div>
-        <HomeTiles
-          perMember={perMember}
-          thisCycle={inCycle.length}
-          daysLeft={daysLeftInCycle()}
-          leader={
-            top ? { id: top.memberId, name: top.memberName, points: top.points } : null
-          }
-        />
-      </div>
+
+        <Composer />
+      </section>
 
       <Reveal>
         <HeroScene />
