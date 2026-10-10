@@ -4,6 +4,7 @@ import HomeTiles from "@/components/HomeTiles";
 import QuietNav from "@/components/QuietNav";
 import { DiamondRule } from "@/components/brand/DiamondRule";
 import { Reveal } from "@/components/ui/reveal";
+import { NEWSLETTER } from "@/lib/config/rules";
 import { listContributions, listMembers } from "@/lib/db/store";
 import { cycleLeaderboard } from "@/lib/services/leaderboard";
 import { cycleKey, daysLeftInCycle } from "@/lib/util/date";
@@ -54,7 +55,7 @@ export default async function HomePage() {
 
       <DiamondRule />
 
-      <QuietNav />
+      <QuietNav archiveUrl={NEWSLETTER.archiveUrl} />
     </div>
   );
 }

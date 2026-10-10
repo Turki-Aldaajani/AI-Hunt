@@ -4,6 +4,7 @@ import { Check, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import ArchiveLink from "@/components/ArchiveLink";
 import { InjazMark } from "@/components/brand/InjazLogo";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -97,7 +98,7 @@ function MemberPicker() {
   );
 }
 
-export default function Header() {
+export default function Header({ archiveUrl }: { archiveUrl: string }) {
   const pathname = usePathname();
   // On the home page the composer is the interface, the header carries the
   // name and nothing else that could compete with it.
@@ -110,6 +111,14 @@ export default function Header() {
         !bare && "border-b border-border",
       )}
     >
+      {/* On desktop the nav sits inside the bar, so the archive gets its own
+          row above the whole bar. */}
+      {!bare && (
+        <div className="mx-auto hidden max-w-5xl justify-center px-4 pt-3 sm:px-6 md:flex">
+          <ArchiveLink href={archiveUrl} />
+        </div>
+      )}
+
       <div className="mx-auto flex h-14 max-w-5xl items-center gap-6 px-4 sm:px-6">
         {/* Injaz owns this interface, and the header says so once: the arch,
             the name, then the product it is host to. */}
@@ -159,7 +168,13 @@ export default function Header() {
       </div>
 
       {!bare && (
-        <nav className="flex items-center gap-4 overflow-x-auto border-t border-border px-4 py-2 md:hidden">
+        <div className="border-t border-border px-4 pt-3 md:hidden">
+          <ArchiveLink href={archiveUrl} className="w-full" />
+        </div>
+      )}
+
+      {!bare && (
+        <nav className="flex items-center gap-4 overflow-x-auto px-4 py-2 md:hidden">
           {NAV.map((item) => {
             const active = pathname.startsWith(item.href);
             return (
