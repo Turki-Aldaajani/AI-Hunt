@@ -227,6 +227,9 @@ export default function AdminPage() {
             <Link href="/admin/newsletter">النشرة</Link>
           </Button>
           <Button asChild variant="outline" size="sm">
+            <Link href="/admin/history">سجل النقاط</Link>
+          </Button>
+          <Button asChild variant="outline" size="sm">
             <Link href="/leaderboard">عرض الترتيب</Link>
           </Button>
         </div>
